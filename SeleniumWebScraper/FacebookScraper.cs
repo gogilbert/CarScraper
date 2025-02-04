@@ -1,5 +1,7 @@
-﻿using OpenQA.Selenium;
+﻿using System.Collections;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Firefox;
+using OpenQA.Selenium.Support.UI;
 using Cookie = OpenQA.Selenium.Cookie;
 
 IWebDriver driver;
@@ -30,3 +32,33 @@ foreach (var c in cookies) {
 }
 
 driver.Navigate().Refresh();
+
+driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(15);
+
+List<IWebElement> carPrices = driver.FindElements(By.CssSelector(".x3ct3a4 > a > div > div.x9f619 > div:nth-of-type(1) > span > div > span")).ToList();
+List<IWebElement> carNames = driver.FindElements(By.CssSelector(".x3ct3a4 > a > div > div.x9f619 > div:nth-of-type(2) > span > div > span > span")).ToList();
+List<IWebElement> carLocations = driver.FindElements(By.CssSelector(".x3ct3a4 > a > div > div.x9f619 > div:nth-of-type(3) > span > div > span > span")).ToList();
+List<IWebElement> carKms = driver.FindElements(By.CssSelector(".x3ct3a4 > a > div > div.x9f619 > div > div > span > span")).ToList();
+
+List<Car> foundCars = new List<Car>();
+
+for(int i = 0; i < 15; i++){
+    Car newCar = new Car();
+    
+    newCar.price = carPrices[i].Text;
+    newCar.name = carNames[i].Text;
+    newCar.location = carLocations[i].Text;
+    newCar.kilometers = carKms[i].Text;
+
+    foundCars.Add(newCar);
+}
+
+foreach (Car cur in foundCars){
+    Console.WriteLine("A Found Car: ");
+    Console.WriteLine("Name: "+cur.name);
+    Console.WriteLine("Price: "+cur.price);
+    Console.WriteLine("Location: "+cur.location);
+    Console.WriteLine("Kilometers: "+cur.kilometers);
+    Console.WriteLine();
+}
+driver.Quit();
